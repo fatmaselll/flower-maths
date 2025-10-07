@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kedi Patili Hesap Makinesi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Çiçek tuş stili */
+    .cicek {
+      width: 64px;
+      height: 64px;
+      background: none;
+      border: none;
+      outline: none;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+      user-select: none;
+    }
+    .cicek:active {
+      transform: scale(0.95);
+    }
+    .cicek-yaprak {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 70%, #fff 100%);
+      border-radius: 50% 70% 50% 70%/70% 50% 70% 50%;
+      opacity: 0.95;
+      z-index: 1;
+    }
+    .cicek-yaprak1 { transform: rotate(0deg)   translateY(-22px);}
+    .cicek-yaprak2 { transform: rotate(72deg)  translateY(-22px);}
+    .cicek-yaprak3 { transform: rotate(144deg) translateY(-22px);}
+    .cicek-yaprak4 { transform: rotate(216deg) translateY(-22px);}
+    .cicek-yaprak5 { transform: rotate(288deg) translateY(-22px);}
+    .cicek-orta {
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 80%, #fff 100%);
+      border-radius: 50%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #fff;
+      text-shadow: 0 1px 3px #0002;
+      pointer-events: none;
+      margin-bottom: 2px;
+    }
+    .cicek-anim {
+      animation: cicekPop 0.18s cubic-bezier(.4,2,.6,1) both;
+    }
+    @keyframes cicekPop {
+      0% { transform: scale(0.92);}
+      80% { transform: scale(1.08);}
+      100% { transform: scale(1);}
+    }
+    /* Sil tuşu için ikon */
+    .sil-ikon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @media (max-width: 500px) {
+      .cicek {
+        width: 48px;
+        height: 48px;
+      }
+      .cicek-orta {
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+      }
+      .cicek-yaprak {
+        width: 22px;
+        height: 22px;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-200 via-yellow-100 to-blue-200">
+  <div class="bg-white/80 rounded-3xl shadow-2xl p-6 flex flex-col items-center w-[360px] max-w-full sm:w-[360px] xs:w-[98vw]">
+    <div id="display" class="w-full mb-6 text-right text-3xl font-mono bg-white rounded-xl px-4 py-3 shadow-inner min-h-[48px] text-gray-700 select-all break-all sm:text-3xl text-xl sm:px-4 px-2 sm:py-3 py-2">0</div>
+    <div class="grid grid-cols-4 gap-4 w-full sm:gap-4 gap-2">
+      <!-- 1. Satır: Mutlak Değer, Karekök, Üs, Bölme -->
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="abs" title="Mutlak Değer">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">|x|</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value="sqrt" title="Karekök">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">&radic;</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="^" title="Üs">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">xʸ</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="/">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">÷</span>
+      </button>
+      <!-- 2. Satır: 7 8 9 Çarpı -->
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="7">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">7</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f472b6" data-value="8">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">8</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value="9">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">9</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="*">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">×</span>
+      </button>
+      <!-- 3. Satır: 4 5 6 Eksi -->
+      <button class="cicek" style="--cicek-renk:#34d399" data-value="4">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">4</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="5">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">5</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f472b6" data-value="6">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">6</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="-">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">−</span>
+      </button>
+      <!-- 4. Satır: 1 2 3 Artı -->
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value="1">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">1</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#34d399" data-value="2">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">2</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="3">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">3</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="+">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">+</span>
+      </button>
+      <!-- 5. Satır: 0 . C Sil -->
+      <button class="cicek" style="--cicek-renk:#f472b6" data-value="0">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">0</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value=".">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">.</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#34d399" data-value="C">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">C</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="DEL" title="Sil">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">
+          <!-- Standart backspace ikonu -->
+          <svg class="sil-ikon" viewBox="0 0 24 24" fill="none">
+            <path d="M6 19L2 12L6 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H6Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.5 9.5L14.5 14.5M14.5 9.5L9.5 14.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+      <!-- 6. Satır: Eşittir (tam genişlik) -->
+      <button class="cicek col-span-4" style="--cicek-renk:#fbbf24;width:100%;" data-value="=">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">=</span>
+      </button>
+    </div>
+  </div>
+  <script>
+    const display = document.getElementById('display');
+    let current = '';
+    let resetNext = false;
+
+    function updateDisplay(val) {
+      display.textContent = val;
+    }
+
+    document.querySelectorAll('.cicek').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.remove('cicek-anim');
+        void btn.offsetWidth; // animasyonu tekrar tetiklemek için
+        btn.classList.add('cicek-anim');
+        const value = btn.getAttribute('data-value');
+        if (value === 'C') {
+          current = '';
+          updateDisplay('0');
+        } else if (value === 'DEL') {
+          if (resetNext) {
+            current = '';
+            resetNext = false;
+            updateDisplay('0');
+          } else {
+            current = current.slice(0, -1);
+            updateDisplay(current || '0');
+          }
+        } else if (value === 'sqrt') {
+          if (current) {
+            try {
+              let num = eval(current.replace(/÷/g, '/').replace(/×/g, '*').replace(/\^/g, '**'));
+              if (num < 0) throw new Error();
+              let result = Math.sqrt(num);
+              updateDisplay(result);
+              current = result.toString();
+              resetNext = true;
+            } catch {
+              updateDisplay('Hata');
+              current = '';
+              resetNext = true;
+            }
+          }
+        } else if (value === '^') {
+          if (current && !/[+\-*/^.]$/.test(current)) {
+            current += '^';
+            updateDisplay(current);
+          }
+        } else if (value === 'abs') {
+          if (current) {
+            try {
+              let num = eval(current.replace(/÷/g, '/').replace(/×/g, '*').replace(/\^/g, '**'));
+              let result = Math.abs(num);
+              updateDisplay(result);
+              current = result.toString();
+              resetNext = true;
+            } catch {
+              updateDisplay('Hata');
+              current = '';
+              resetNext = true;
+            }
+          }
+        } else if (value === '=') {
+          try {
+            // Sadece izin verilen karakterler
+            if (/^[\d+\-*/.^ ]+$/.test(current)) {
+              let expr = current.replace(/÷/g, '/').replace(/×/g, '*').replace(/\^/g, '**');
+              let result = eval(expr);
+              if (result === Infinity || isNaN(result)) throw new Error();
+              updateDisplay(result);
+              current = result.toString();
+              resetNext = true;
+            } else {
+              updateDisplay('Hata');
+              current = '';
+              resetNext = true;
+            }
+          } catch {
+            updateDisplay('Hata');
+            current = '';
+            resetNext = true;
+          }
+        } else {
+          if (resetNext) {
+            current = '';
+            resetNext = false;
+          }
+          if (current.length < 18) {
+            current += value;
+            updateDisplay(current);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
