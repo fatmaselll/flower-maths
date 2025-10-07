@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kedi Patili Hesap Makinesi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Çiçek tuş stili */
+    .cicek {
+      width: 64px;
+      height: 64px;
+      background: none;
+      border: none;
+      outline: none;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+      user-select: none;
+    }
+    .cicek:active {
+      transform: scale(0.95);
+    }
+    .cicek-yaprak {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 70%, #fff 100%);
+      border-radius: 50% 70% 50% 70%/70% 50% 70% 50%;
+      opacity: 0.95;
+      z-index: 1;
+    }
+    .cicek-yaprak1 { transform: rotate(0deg)   translateY(-22px);}
+    .cicek-yaprak2 { transform: rotate(72deg)  translateY(-22px);}
+    .cicek-yaprak3 { transform: rotate(144deg) translateY(-22px);}
+    .cicek-yaprak4 { transform: rotate(216deg) translateY(-22px);}
+    .cicek-yaprak5 { transform: rotate(288deg) translateY(-22px);}
+    .cicek-orta {
+      width: 32px;
+      height: 32px;
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 80%, #fff 100%);
+      border-radius: 50%;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      font-weight: bold;
+      font-size: 1.3rem;
+      color: #fff;
+      text-shadow: 0 1px 3px #0002;
+      pointer-events: none;
+      margin-bottom: 2px;
+    }
+    .cicek-anim {
+      animation: cicekPop 0.18s cubic-bezier(.4,2,.6,1) both;
+    }
+    @keyframes cicekPop {
+      0% { transform: scale(0.92);}
+      80% { transform: scale(1.08);}
+      100% { transform: scale(1);}
+    }
+    /* Sil tuşu için ikon */
+    .sil-ikon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .kare-btn {
+      width: 100%;
+      height: 64px;
+      margin: 0;
+      border: none;
+      outline: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      transition: transform 0.1s;
+      cursor: pointer;
+      user-select: none;
+    }
+    .kare-btn:active {
+      transform: scale(0.95);
+      background-color: #d1d5db;
+    }
+    @media (max-width: 500px) {
+      .cicek {
+        width: 48px;
+        height: 48px;
+      }
+      .cicek-orta {
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+      }
+      .cicek-yaprak {
+        width: 22px;
+        height: 22px;
+      }
+      .kare-btn {
+        height: 48px;
+        font-size: 1rem;
+      }
+    }
+    body {
+      background: linear-gradient(135deg, #232946 0%, #1a1a2e 100%);
+      transition: background 0.3s;
+    }
+    .bg-white\/80 {
+      background-color: rgba(34, 34, 54, 0.95) !important;
+      box-shadow: 0 4px 24px #0008;
+    }
+    #display {
+      background: #232946 !important;
+      color: #f7f7f7 !important;
+      box-shadow: 0 2px 8px #0006;
+      border: 1px solid #444;
+    }
+    .kare-btn {
+      background: #232946 !important;
+      color: #f7f7f7 !important;
+      border: 1px solid #444;
+      box-shadow: 0 2px 8px #0006;
+    }
+    .kare-btn:active {
+      background: #393e6b !important;
+    }
+    .cicek-orta {
+      color: #fff !important;
+      text-shadow: 0 1px 6px #0008;
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 90%, #232946 100%);
+      box-shadow: 0 2px 12px #0008;
+    }
+    .cicek-yaprak {
+      background: radial-gradient(circle at 60% 60%, var(--cicek-renk, #fbbf24) 80%, #232946 100%);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center transition-all duration-300">
+  <div class="bg-white/80 rounded-3xl shadow-2xl p-6 flex flex-col items-center w-[360px] max-w-full sm:w-[360px] xs:w-[98vw]">
+    <div id="display" class="w-full mb-6 text-right text-3xl font-mono rounded-xl px-4 py-3 shadow-inner min-h-[48px] select-all break-all sm:text-3xl text-xl sm:px-4 px-2 sm:py-3 py-2">0</div>
+    <div class="grid grid-cols-4 gap-4 w-full sm:gap-4 gap-2">
+      <!-- 1. Satır: Eşittir, Karekök, Üs, Bölme -->
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="=" title="Eşittir">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">=</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value="sqrt" title="Karekök">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">&radic;</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#f472b6" data-value="^" title="Üs">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">xʸ</span>
+      </button>
+      <button class="cicek" style="--cicek-renk:#34d399" data-value="/" title="Bölme">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">÷</span>
+      </button>
+      <!-- 2. Satır: 7 8 9 Çarpı -->
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="7" style="height:64px;">
+        7
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="8" style="height:64px;">
+        8
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="9" style="height:64px;">
+        9
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="*" title="Çarpı">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">×</span>
+      </button>
+      <!-- 3. Satır: 4 5 6 Eksi -->
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="4" style="height:64px;">
+        4
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="5" style="height:64px;">
+        5
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="6" style="height:64px;">
+        6
+      </button>
+      <button class="cicek" style="--cicek-renk:#fbbf24" data-value="-" title="Eksi">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">−</span>
+      </button>
+      <!-- 4. Satır: 1 2 3 Artı -->
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="1" style="height:64px;">
+        1
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="2" style="height:64px;">
+        2
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="3" style="height:64px;">
+        3
+      </button>
+      <button class="cicek" style="--cicek-renk:#60a5fa" data-value="+" title="Artı">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">+</span>
+      </button>
+      <!-- 5. Satır: 0 . C Sil -->
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="0" style="height:64px;">
+        0
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="." style="height:64px;">
+        .
+      </button>
+      <button class="kare-btn bg-gray-300 text-gray-700 font-bold rounded-lg" data-value="C" style="height:64px;">
+        C
+      </button>
+      <button class="cicek" style="--cicek-renk:#f87171" data-value="DEL" title="Sil">
+        <span class="cicek-yaprak cicek-yaprak1"></span>
+        <span class="cicek-yaprak cicek-yaprak2"></span>
+        <span class="cicek-yaprak cicek-yaprak3"></span>
+        <span class="cicek-yaprak cicek-yaprak4"></span>
+        <span class="cicek-yaprak cicek-yaprak5"></span>
+        <span class="cicek-orta">
+          <!-- Standart backspace ikonu -->
+          <svg class="sil-ikon" viewBox="0 0 24 24" fill="none">
+            <path d="M6 19L2 12L6 5H20C21.1046 5 22 5.89543 22 7V17C22 18.1046 21.1046 19 20 19H6Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9.5 9.5L14.5 14.5M14.5 9.5L9.5 14.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+  <script>
+    const display = document.getElementById('display');
+    let current = '';
+    let resetNext = false;
+
+    function updateDisplay(val) {
+      display.textContent = val;
+    }
+
+    document.querySelectorAll('.cicek, .kare-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.remove('cicek-anim');
+        void btn.offsetWidth;
+        btn.classList.add('cicek-anim');
+        const value = btn.getAttribute('data-value');
+
+        if (value === 'C') {
+          current = '';
+          updateDisplay('0');
+        } else if (value === 'DEL') {
+          if (resetNext) {
+            current = '';
+            resetNext = false;
+            updateDisplay('0');
+          } else {
+            current = current.slice(0, -1);
+            updateDisplay(current || '0');
+          }
+        } else if (value === 'sqrt') {
+          if (current) {
+            try {
+              let num = eval(current.replace(/÷/g, '/').replace(/×/g, '*').replace(/\^/g, '**'));
+              if (num < 0) throw new Error();
+              let result = Math.sqrt(num);
+              updateDisplay(result);
+              current = result.toString();
+              resetNext = true;
+            } catch {
+              updateDisplay('Hata');
+              current = '';
+              resetNext = true;
+            }
+          }
+        } else if (value === '^') {
+          if (current && !/[+\-*/^.]$/.test(current)) {
+            current += '^';
+            updateDisplay(current);
+          }
+        } else if (value === '=') {
+          try {
+            if (/^[\d+\-*/.^ ]+$/.test(current)) {
+              let expr = current.replace(/÷/g, '/').replace(/×/g, '*').replace(/\^/g, '**');
+              let result = eval(expr);
+              if (result === Infinity || isNaN(result)) throw new Error();
+              updateDisplay('meowing= ' + result);
+              current = result.toString();
+              resetNext = true;
+            } else {
+              updateDisplay('Hata');
+              current = '';
+              resetNext = true;
+            }
+          } catch {
+            updateDisplay('Hata');
+            current = '';
+            resetNext = true;
+          }
+        } else {
+          if (resetNext) {
+            current = '';
+            resetNext = false;
+          }
+          if (current.length < 18) {
+            current += value;
+            updateDisplay(current);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+  </script>
+</body>
+</html>
+              resetNext = true;
+            }
+          } catch {
+            updateDisplay('Hata');
+            current = '';
+            resetNext = true;
+          }
+        } else {
+          if (resetNext) {
+            current = '';
+            resetNext = false;
+          }
+          if (current.length < 18) {
+            current += value;
+            updateDisplay(current);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+</html>
+            current = '';
+            resetNext = false;
+          }
+          if (current.length < 18) {
+            current += value;
+            updateDisplay(current);
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
